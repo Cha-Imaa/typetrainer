@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TypeTrainer 3</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta name="theme-color" content="#5a2fc0">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="crown">♛</span>
+      <span class="brand-name">Type<span class="brand-accent">Trainer</span>&nbsp;<span class="brand-two">3</span></span>
+    </div>
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="practice">Practice</button>
+      <button class="tab-btn" data-tab="dashboard">Dashboard</button>
+      <button class="tab-btn" data-tab="milestones">Milestones</button>
+      <button class="tab-btn" data-tab="weakspots">Weak Spots</button>
+      <button class="tab-btn" data-tab="shortcuts">Shortcuts <span id="sc-nav-due" class="sc-nav-due" hidden></span></button>
+      <button class="tab-btn" data-tab="settings">Settings</button>
+    </nav>
+    <div class="topbar-right">
+      <span class="kbd-hint">Alt + 1..6</span>
+      <button id="theme-toggle" class="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+        <span class="sun">☀</span><span class="moon">☾</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================ PRACTICE ============================ -->
+  <main id="panel-practice" class="panel">
+    <div class="practice-layout">
+      <section class="practice-main">
+        <div id="practice-controls" class="practice-controls">
+          <div class="control-group">
+            <span class="control-label">Mode</span>
+            <div class="pill-group">
+              <button class="mode-pill active" data-mode="test">Test</button>
+              <button class="mode-pill" data-mode="sprint">Sprint 90s</button>
+              <button class="mode-pill" data-mode="loop">Daily loop</button>
+            </div>
+          </div>
+          <div class="control-group" id="duration-group">
+            <span class="control-label">Duration</span>
+            <div class="pill-group">
+              <button class="duration-pill" data-dur="15">15s</button>
+              <button class="duration-pill" data-dur="30">30s</button>
+              <button class="duration-pill" data-dur="60">60s</button>
+              <button class="duration-pill" data-dur="120">120s</button>
+            </div>
+          </div>
+          <div class="toggle-group">
+            <div class="toggle-wrap">
+              <button class="toggle-chip" data-toggle="capitals">Aa</button>
+              <span class="toggle-label">Capitals</span>
+            </div>
+            <div class="toggle-wrap">
+              <button class="toggle-chip" data-toggle="punctuation">.,?</button>
+              <span class="toggle-label">Punctuation</span>
+            </div>
+            <div class="toggle-wrap">
+              <button class="toggle-chip" data-toggle="numbers">123</button>
+              <span class="toggle-label">Numbers</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="results-live" class="target-strip">
+          <span id="target-label" class="target-label">Targeted this round</span>
+          <div id="target-chips" class="target-chips"></div>
+          <p class="sidebar-note">Weak patterns are woven into your text — they fade as you improve.</p>
+          <p id="sprint-note" class="sidebar-note sprint-note hidden"></p>
+        </div>
+
+        <div id="practice-stage" class="practice-stage">
+          <input id="hidden-input" type="text" autocomplete="off" autocapitalize="off"
+                 autocorrect="off" spellcheck="false" aria-label="Typing input">
+          <div id="practice-text-wrap" class="practice-text-wrap">
+            <div id="practice-text" class="practice-text"></div>
+          </div>
+
+          <div class="stage-divider"><span class="lotus">✦</span></div>
+
+          <div class="stage-timer">
+            <div id="practice-timer" class="big-timer">00:30</div>
+            <div id="practice-timer-sub" class="timer-sub">30s ready</div>
+            <div id="stage-dots" class="stage-dots"></div>
+          </div>
+
+          <div id="loop-gate" class="loop-gate hidden">
+            <div class="loop-gate-card">
+              <div class="loop-gate-lotus">✦</div>
+              <div class="loop-gate-title">Part <span id="gate-done-num">1</span> of <span id="gate-total">8</span> complete</div>
+              <div class="loop-gate-stage" id="gate-stage-done">Warm-up</div>
+              <div class="loop-gate-next">Next up: <span id="gate-stage-next" class="accent">Transitions</span></div>
+              <button id="gate-continue" class="btn-primary">Continue <span class="key-badge">Enter</span></button>
+              <div class="loop-gate-hint">Take a breath — the clock is paused.</div>
+            </div>
+          </div>
+
+          <div class="stage-live">
+            <div class="live-stat">
+              <div class="live-value gold"><span id="live-wpm">0</span></div>
+              <div class="live-label">WPM</div>
+            </div>
+            <div class="live-divider"></div>
+            <div class="live-stat">
+              <div class="live-value green"><span id="live-acc">100</span>%</div>
+              <div class="live-label">Accuracy</div>
+            </div>
+          </div>
+
+          <div class="stage-footer">
+            <div class="legend">
+              <span class="legend-item"><span class="dot dot-correct"></span> Correct</span>
+              <span class="legend-item"><span class="dot dot-incorrect"></span> Incorrect</span>
+              <span class="legend-item"><span class="dot dot-corrected"></span> Corrected</span>
+              <span class="legend-item"><span class="caret-demo">|</span> Current</span>
+            </div>
+            <span class="esc-hint">Esc to abort</span>
+          </div>
+        </div>
+        <div id="results-panel" class="sidebar-card results hidden">
+          <div class="results-header">Great job! <span class="crown-sm">♛</span></div>
+          <div class="results-main">
+            <div class="res-stat">
+              <div class="res-value purple" id="res-wpm">0</div>
+              <div class="res-label">WPM</div>
+            </div>
+            <div class="res-vline"></div>
+            <div class="res-stat">
+              <div class="res-value green"><span id="res-acc">0</span><span class="pct">%</span></div>
+              <div class="res-label">Accuracy</div>
+            </div>
+          </div>
+          <div class="results-row">
+            <div class="res-mini"><div class="res-mini-val" id="res-raw">0</div><div class="res-mini-label">Raw WPM</div></div>
+            <div class="res-mini"><div class="res-mini-val bad" id="res-errs">0</div><div class="res-mini-label">Errors</div></div>
+            <div class="res-mini"><div class="res-mini-val" id="res-dur">30s</div><div class="res-mini-label">Duration</div></div>
+          </div>
+          <div id="res-improve" class="res-improve hidden"></div>
+          <div id="res-parked" class="res-improve res-parked hidden"></div>
+          <div id="res-badge" class="res-badge hidden"></div>
+          <div id="pb-banner" class="pb-banner hidden">★ NEW PERSONAL BEST!</div>
+          <button id="btn-new-test" class="btn-primary"><span class="key-badge">Enter ↵</span> New test</button>
+          <button id="btn-restart" class="btn-secondary"><span class="key-badge">Tab</span> New test, same settings</button>
+        </div>
+      </section>
+    </div>
+
+    <footer class="tip-bar">
+      <span class="tip-icon">💡</span>
+      <span id="tip-text">Tip: Focus on accuracy first, speed will follow naturally.</span>
+    </footer>
+  </main>
+
+  <!-- ============================ DASHBOARD ============================ -->
+  <main id="panel-dashboard" class="panel hidden">
+    <div class="tiles">
+      <div class="tile">
+        <div class="tile-icon">📈</div>
+        <div>
+          <div class="tile-label">Total sessions</div>
+          <div class="tile-value" id="tile-sessions">0</div>
+          <div class="tile-sub good" id="tile-sessions-sub"></div>
+        </div>
+      </div>
+      <div class="tile">
+        <div class="tile-icon">🕑</div>
+        <div>
+          <div class="tile-label">Total practice time</div>
+          <div class="tile-value" id="tile-time">0m</div>
+          <div class="tile-sub good" id="tile-time-sub"></div>
+        </div>
+      </div>
+      <div class="tile" title="Time the app was open, focused and in use: reading results, browsing tabs, changing settings. Idle for 2 minutes or in another window does not count.">
+        <div class="tile-icon">🖥️</div>
+        <div>
+          <div class="tile-label">Total time in app</div>
+          <div class="tile-value" id="tile-ui-time">0s</div>
+          <div class="tile-sub good" id="tile-ui-time-sub"></div>
+        </div>
+      </div>
+      <div class="tile">
+        <div class="tile-icon">⚡</div>
+        <div>
+          <div class="tile-label">Average WPM (last 10)</div>
+          <div class="tile-value" id="tile-avg">—</div>
+          <div class="tile-sub" id="tile-avg-sub"></div>
+        </div>
+      </div>
+      <div class="tile">
+        <div class="tile-icon">🏆</div>
+        <div>
+          <div class="tile-label">Best WPM</div>
+          <div class="tile-value" id="tile-best">—</div>
+          <div class="tile-sub" id="tile-best-sub"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="card">
+        <div class="card-title">Activity</div>
+        <div id="heatmap" class="heatmap"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">WPM over sessions <span class="card-legend"><span class="dot dot-purple"></span> WPM <span class="avg-line-demo"></span> 10-session avg</span></div>
+        <div id="chart-wpm" class="chart"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Accuracy over sessions <span class="card-legend"><span class="dot dot-purple"></span> Accuracy <span class="avg-line-demo"></span> 10-session avg</span></div>
+        <div id="chart-acc" class="chart"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Personal bests</div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Duration</th><th>Settings</th><th>WPM</th><th>Accuracy</th><th>Achieved</th></tr>
+          </thead>
+          <tbody id="bests-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="motto"><span class="lotus">✦</span> Consistency creates progress.</div>
+  </main>
+
+  <!-- ============================ MILESTONES ============================ -->
+  <main id="panel-milestones" class="panel hidden">
+    <div class="ms-top">
+      <div class="tile ms-speed-tile">
+        <div class="tile-icon">⚡</div>
+        <div>
+          <div class="tile-label">Your speed</div>
+          <div class="tile-value ms-speed-value"><span id="ms-speed">—</span> <span class="ms-speed-unit">WPM</span></div>
+          <div class="tile-sub" id="ms-speed-sub"></div>
+        </div>
+      </div>
+      <div class="tile">
+        <div class="tile-icon">♛</div>
+        <div>
+          <div class="tile-label" id="ms-best-label">Highest verified milestone</div>
+          <div class="tile-value gold" id="ms-best">—</div>
+          <div class="tile-sub" id="ms-best-sub"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ms-tracks" id="ms-tracks">
+      <button class="ms-track active" data-track="steady">
+        <span class="ms-track-name">Sustained</span>
+        <span class="ms-track-sub">30-second tests</span>
+      </button>
+      <button class="ms-track" data-track="burst">
+        <span class="ms-track-name">Burst</span>
+        <span class="ms-track-sub">15-second tests</span>
+      </button>
+    </div>
+
+    <div class="ms-grid-layout">
+      <div id="ms-next-card" class="card ms-next-card"></div>
+      <div class="card">
+        <div class="card-title">Speed milestones <span class="card-sub" id="ms-grid-sub">verified badges are permanent — they never downgrade</span></div>
+        <div id="ms-grid" class="ms-grid"></div>
+      </div>
+    </div>
+    <div class="motto"><span class="lotus">✦</span> A badge means proven, repeatable speed — not one lucky run.</div>
+  </main>
+
+  <!-- ============================ SHORTCUTS ============================ -->
+  <main id="panel-shortcuts" class="panel hidden">
+    <div class="sc-intro">
+      <h2 class="sc-heading">Keyboard shortcuts <span class="sc-heading-sub">learn a few, review them until they're automatic</span></h2>
+      <p class="dim small">Review what's due → learn something new → repeat. Windows and macOS keep separate progress; Terminal commands and Tools shortcuts are shared.</p>
+    </div>
+    <div id="sc-root" class="sc-wrap"></div>
+    <div class="motto"><span class="lotus">✦</span> Fast fingers on the keys, fast hands on the machine.</div>
+  </main>
+
+  <!-- ============================ WEAK SPOTS ============================ -->
+  <main id="panel-weakspots" class="panel hidden">
+    <div id="weak-coldstart" class="card coldstart hidden">
+      <div class="coldstart-crown">♛</div>
+      <h2>Keep typing — learning your fingers</h2>
+      <p class="dim">Complete a few practice tests so TypeTrainer can find the patterns that slow you down.</p>
+      <div class="coldstart-progress">
+        <div class="coldstart-bar"><div id="coldstart-fill" class="coldstart-fill"></div></div>
+        <span id="coldstart-count" class="dim">0 / 30</span>
+      </div>
+    </div>
+
+    <div id="weak-content">
+      <div id="autopilot" class="card autopilot hidden">
+        <div class="card-title gold-title">♛ Typing Autopilot <span class="card-sub">where your speed is being lost right now</span></div>
+        <div class="ap-speeds">
+          <div class="ap-speed">
+            <div class="ap-speed-value purple"><span id="ap-comfort">—</span></div>
+            <div class="ap-speed-label">Comfortable WPM</div>
+          </div>
+          <div class="ap-arrow">→</div>
+          <div class="ap-speed">
+            <div class="ap-speed-value gold"><span id="ap-potential">—</span></div>
+            <div class="ap-speed-label">Your fingers are good for</div>
+          </div>
+        </div>
+        <p id="ap-transition" class="ap-note dim hidden"></p>
+        <div id="ap-bottlenecks" class="ap-list"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Your weak patterns <span class="card-sub">ranked by estimated time cost — practice targets these automatically</span></div>
+        <table class="data-table weak-table">
+          <thead>
+            <tr><th>Pattern</th><th>Type</th><th>Error rate</th><th>Speed</th><th>Attempts</th><th>Trend</th><th>Time cost</th></tr>
+          </thead>
+          <tbody id="weak-body"></tbody>
+        </table>
+      </div>
+
+      <div id="mastered-section" class="card mastered-card hidden">
+        <div class="card-title gold-title">♛ Recently mastered <span class="card-sub">accurate, at pace and steady — these no longer need your attention</span></div>
+        <div id="mastered-list" class="mastered-list"></div>
+      </div>
+
+      <div id="blocked-section" class="card hidden">
+        <div class="card-title dim">Not currently trainable <span class="card-sub">these need a practice option you have turned off</span></div>
+        <div id="blocked-list" class="blocked-list"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============================ SETTINGS ============================ -->
+  <main id="panel-settings" class="panel hidden">
+    <div class="settings-grid">
+      <div class="card">
+        <div class="card-title">Appearance</div>
+        <div class="setting-row">
+          <span>Theme</span>
+          <div class="pill-group">
+            <button class="theme-option duration-pill" data-theme-opt="dark">Dark</button>
+            <button class="theme-option duration-pill" data-theme-opt="dim">Dim</button>
+            <button class="theme-option duration-pill" data-theme-opt="light">Light</button>
+            <button class="theme-option duration-pill" data-theme-opt="auto">Auto</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Practice</div>
+        <div class="setting-row">
+          <div>
+            <div>Daily loop length</div>
+            <div class="dim small">One-minute parts, warm-up to cool-down — a checkpoint between parts lets you rest.</div>
+          </div>
+          <div class="pill-group">
+            <button class="loop-option duration-pill" data-loop-min="4">4 min</button>
+            <button class="loop-option duration-pill" data-loop-min="6">6 min</button>
+            <button class="loop-option duration-pill" data-loop-min="8">8 min</button>
+            <button class="loop-option duration-pill" data-loop-min="10">10 min</button>
+            <button class="loop-option duration-pill" data-loop-min="12">12 min</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div>Sprint patience</div>
+            <div class="dim small">The sprint stays on one pattern until a day shows real progress, then moves to the next kind (letter → pair → chunk → word). After this many flat days it moves on anyway.</div>
+          </div>
+          <div class="pill-group">
+            <button class="stall-option duration-pill" data-stall-days="6">6 days</button>
+            <button class="stall-option duration-pill" data-stall-days="9">9 days</button>
+            <button class="stall-option duration-pill" data-stall-days="12">12 days</button>
+            <button class="stall-option duration-pill" data-stall-days="20">20 days</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div>Your goal speed — sustained (30s)</div>
+            <div class="dim small">This badge gets the royal treatment — marked in the collection and celebrated like nothing else.</div>
+          </div>
+          <div class="pill-group">
+            <button class="goal-option duration-pill" data-goal-track="steady" data-goal="90">90</button>
+            <button class="goal-option duration-pill" data-goal-track="steady" data-goal="100">100</button>
+            <button class="goal-option duration-pill" data-goal-track="steady" data-goal="110">110</button>
+            <button class="goal-option duration-pill" data-goal-track="steady" data-goal="120">120</button>
+            <button class="goal-option duration-pill" data-goal-track="steady" data-goal="130">130</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div>Your goal speed — burst (15s)</div>
+            <div class="dim small">Fifteen seconds flat out. Verified the same strict way, so the number can sit higher.</div>
+          </div>
+          <div class="pill-group">
+            <button class="goal-option duration-pill" data-goal-track="burst" data-goal="110">110</button>
+            <button class="goal-option duration-pill" data-goal-track="burst" data-goal="120">120</button>
+            <button class="goal-option duration-pill" data-goal-track="burst" data-goal="130">130</button>
+            <button class="goal-option duration-pill" data-goal-track="burst" data-goal="140">140</button>
+            <button class="goal-option duration-pill" data-goal-track="burst" data-goal="150">150</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div>Milestone celebration sound</div>
+            <div class="dim small">A short chime when a speed badge is verified. Confetti plays either way.</div>
+          </div>
+          <div class="pill-group">
+            <button class="sound-option duration-pill" data-sound="on">On</button>
+            <button class="sound-option duration-pill" data-sound="off">Off</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Data</div>
+        <div class="setting-row">
+          <div>
+            <div>Backup your progress</div>
+            <div class="dim small" id="storage-size"></div>
+          </div>
+          <div class="btn-row">
+            <button id="btn-export" class="btn-secondary">Export backup</button>
+            <label class="btn-secondary file-label">Import backup<input id="import-file" type="file" accept=".json,application/json"></label>
+          </div>
+        </div>
+        <div class="setting-row danger-row">
+          <div>
+            <div>Danger zone</div>
+            <div class="dim small">Erases all sessions, stats and weak-pattern data.</div>
+          </div>
+          <button id="btn-reset" class="btn-danger">Reset all data</button>
+        </div>
+        <div id="settings-flash" class="settings-flash hidden"></div>
+      </div>
+
+      <div class="card guide-card">
+        <div class="card-title">How to use TypeTrainer</div>
+        <p class="guide-intro dim">A quick guide to everything in the app — no jargon, just what each part does and when to use it.</p>
+
+        <div class="guide-item">
+          <div class="guide-head"><span class="guide-icon">⌨</span> Start typing</div>
+          <p>Open the <strong>Practice</strong> tab, click on the text, and type. The timer starts with your first key press. Correct letters light up, mistakes turn red, and letters you go back and fix show in green. When the time is up, your speed (WPM) and accuracy appear. Press <span class="kbd">Enter</span> for a new test or <span class="kbd">Esc</span> to stop early.</p>
+        </div>
+
+        <div class="guide-item">
+          <div class="guide-head"><span class="guide-icon">⏱</span> Test</div>
+          <p>A normal typing test. Pick how long you want it to be (15, 30, 60 or 120 seconds) and type. Use this to measure your speed and set personal bests. The text quietly includes the letters and words you struggle with, so every test is also practice.</p>
+        </div>
+
+        <div class="guide-item">
+          <div class="guide-head"><span class="guide-icon">🎯</span> Sprint 90s</div>
+          <p>A short, focused drill on <strong>one</strong> weak pattern — for example a letter pair that always slows you down. Over 90 seconds it moves through four steps: first the pattern on its own, then in small chunks, then in words, then in natural sentences. Great when you want to fix one specific problem fast.</p>
+        </div>
+
+        <div class="guide-item">
+          <div class="guide-head"><span class="guide-icon">🔄</span> Daily loop</div>
+          <p>Your daily workout, split into one-minute parts: an easy warm-up, targeted work on your weak patterns, natural text, and a cool-down. After each part the clock pauses at a checkpoint — press Continue (or Enter) when you're ready for the next one. Choose how many parts it has (4 to 12 minutes) in Settings. Doing one loop a day is the simplest way to improve steadily.</p>
+        </div>
+
+        <div class="guide-item">
+          <div class="guide-head"><span class="guide-icon">Aa</span> Capitals, punctuation and numbers</div>
+          <p>The three small switches above the text let you choose what appears in your practice: capital letters, punctuation marks, and numbers. Turn them on when you feel ready — real-world typing uses all three.</p>
+        </div>
+
+        <div class="guide-item">
+          <div class="guide-head"><span class="guide-icon">📈</span> Dashboard</div>
+          <p>Your progress at a glance: how much you have practiced, your average and best speeds, charts of speed and accuracy over time, and an activity calendar that shows the days you practiced.</p>
+        </div>
+
+        <div class="guide-item">
+          <div class="guide-head"><span class="guide-icon">♛</span> Milestones</div>
+          <p>Speed badges you earn as you get faster. A badge is only awarded when you prove the speed three times, on different texts, with high accuracy — so it means you can really type that fast, not that you got lucky once. Once earned, a badge is yours forever.</p>
+        </div>
+
+        <div class="guide-item">
+          <div class="guide-head"><span class="guide-icon">🔍</span> Weak Spots</div>
+          <p>Shows exactly where your typing time is being lost — which key combinations make you hesitate and which keys cause errors. The app needs about 30 tests before it knows your fingers well. Each weak pattern has a <strong>Drill</strong> button that launches a 90-second sprint just for it. When you master a pattern, it moves to the "Recently mastered" list.</p>
+        </div>
+
+        <div class="guide-item">
+          <div class="guide-head"><span class="guide-icon">⌨</span> Shortcuts</div>
+          <p>A learn-and-review system for keyboard shortcuts, so you can run your laptop mostly from the keyboard. Start with the <strong>Core 20%</strong> — the small set that does most of the work — and press <strong>+ Learn</strong> on one or two. They appear in <strong>Review</strong>; try each one, then say <strong>Got it</strong> (it comes back later: 1, 3, 7, 14, 30, 60 days) or <strong>Fuzzy</strong> (back tomorrow). When one feels automatic, <strong>Retire ★</strong> it — it moves to Mastered and the to-learn list shrinks. Windows and macOS are tracked separately. The <strong>Terminal</strong> sub-tab teaches Linux shell commands the same way — Essentials first, then More — and each review card has a box where you type the command back to check yourself. The <strong>Tools</strong> sub-tab does the same per application: pick <strong>VS Code</strong> or <strong>Claude Code</strong> and its shortcuts show. Terminal and Tools keep one shared list on both platforms — switching to macOS just swaps Ctrl for Cmd on screen.</p>
+        </div>
+
+        <div class="guide-item">
+          <div class="guide-head"><span class="guide-icon">💡</span> Tips</div>
+          <p>Accuracy first — speed follows on its own. Short daily practice beats long rare sessions. And don't worry about the weak patterns: the app finds them and trains them for you automatically.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">About</div>
+        <p class="dim">TypeTrainer 3 measures where your typing time is actually lost — hesitant transitions, slow chunks and error-prone keys — then weaves the costliest ones into practice text and targeted drills. New in 3: Verified Speed Badges. A milestone is earned only with repeated evidence — three qualifying tests (98%+ accuracy at the badge speed) on different passages across at least two practice sessions — and once earned it is permanent. Two tracks run in parallel: sustained badges need 30-second tests, burst badges 15-second ones, each with its own goal speed. Everything runs offline; your data never leaves this computer.</p>
+        <p class="dim small">Keys: <span class="kbd">Alt+1..6</span> tabs · <span class="kbd">Enter</span>/<span class="kbd">Tab</span> new test · <span class="kbd">Esc</span> abort</p>
+      </div>
+    </div>
+  </main>
+
+  <div id="sc-toast" class="sc-toast hidden" role="status" aria-live="polite"></div>
+
+  <!-- Badge award / detail modal -->
+  <div id="badge-modal" class="badge-modal hidden">
+    <div id="badge-modal-card" class="badge-modal-card"></div>
+  </div>
+
+  <script src="js/corpus.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/fingermap.js"></script>
+  <script src="js/stats.js"></script>
+  <script src="js/badges.js"></script>
+  <script src="js/generator.js"></script>
+  <script src="js/drills.js"></script>
+  <script src="js/stall.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/heatmap.js"></script>
+  <script src="js/practice.js"></script>
+  <script src="js/usage.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/celebrate.js"></script>
+  <script src="js/milestones.js"></script>
+  <script src="js/weakspots.js"></script>
+  <script src="js/shortcuts-data.js"></script>
+  <script src="js/terminal-data.js"></script>
+  <script src="js/tools-data.js"></script>
+  <script src="js/shortcuts-seed.js"></script>
+  <script src="js/shortcuts.js"></script>
+  <script src="js/settings.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+
