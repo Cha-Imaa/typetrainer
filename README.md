@@ -175,11 +175,3 @@ docs/
   verified-speed-badges.md    the design spec the badge system was built from
 tests/              three suites, 403 assertions
 ```
-
-## Privacy
-
-Everything stays in your browser's `localStorage`. There is no server, no account, no analytics and no network request of any kind — the app works with the Wi-Fi off. You can export a backup of your data from Settings, and clearing your browser storage for the page deletes it just as completely.
-
-## License
-
-[MIT](LICENSE) © Chaimaa Abi
