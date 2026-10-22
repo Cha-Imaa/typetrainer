@@ -141,16 +141,24 @@ python -m http.server 8125     # then open http://localhost:8125
 
 ## Tests
 
-403 assertions across three suites — no fixtures, no mocking framework, just Node and a headless Chrome:
+403 assertions across three suites — no fixtures or mocking framework.
+
+The engine and badge suites need only Node.js (22 or 24) and npm. From the repository root:
 
 ```bash
-node tests/test_engine.js    # 171 — adaptive engine, weakness scoring, drills, sprint rotation
-node tests/test_badges.js    #  79 — badge qualification rules and evidence tracking
-cd tests && npm install      # puppeteer-core, only needed for the UI suite
-node tests/test_ui.js        # 153 — drives the real app in headless Chrome over file://
+npm --prefix tests test      # 171 engine + 79 badge assertions; no dependency install needed
 ```
 
-The UI suite needs to find Chrome; it defaults to the standard Windows install path, and you can point it anywhere with `CHROME=/path/to/chrome node tests/test_ui.js`.
+GitHub Actions runs the same command on Node.js 22 and 24 for every pull request and push to `main`.
+
+The UI suite runs separately and needs Chrome plus the locked Puppeteer dependency. From the repository root:
+
+```bash
+npm --prefix tests ci
+npm --prefix tests run test:ui # 153 assertions — headless Chrome over file://
+```
+
+The UI suite defaults to the standard Windows Chrome install path. In Bash, point it elsewhere with `CHROME=/path/to/chrome npm --prefix tests run test:ui`; in PowerShell, set `$env:CHROME = 'C:\path\to\chrome.exe'` before running the command.
 
 ---
 
