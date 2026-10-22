@@ -21,6 +21,8 @@ function ok(cond, name) {
     args: ['--allow-file-access-from-files']
   });
   var page = await browser.newPage();
+  // Animation assertions need a fixed preference rather than the runner's OS setting.
+  await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
   page.on('pageerror', function (e) { console.error('PAGE ERROR: ' + e.message); failed++; });
 
   // ---- basic load ---------------------------------------------------------
@@ -111,7 +113,7 @@ function ok(cond, name) {
     performance.now = function () { return orig() + shift; };
     void el;
   });
-  await new Promise(function (r) { setTimeout(r, 400); });
+  await page.waitForSelector('#loop-gate:not(.hidden)', { timeout: 5000 });
   ok(await page.$eval('#loop-gate', function (el) { return !el.classList.contains('hidden'); }),
     'checkpoint gate appears after a part completes');
   var gateDone = await page.$eval('#gate-stage-done', function (el) { return el.textContent; });
@@ -119,7 +121,10 @@ function ok(cond, name) {
   var gateNext = await page.$eval('#gate-stage-next', function (el) { return el.textContent; });
   ok(gateNext === 'Transitions I', 'gate names the next part (Transitions I)');
   await page.keyboard.press('Enter');
-  await new Promise(function (r) { setTimeout(r, 300); });
+  await page.waitForFunction(function () {
+    return document.getElementById('loop-gate').classList.contains('hidden') &&
+      /Transitions I/.test(document.getElementById('practice-timer-sub').textContent);
+  }, { timeout: 5000 });
   ok(await page.$eval('#loop-gate', function (el) { return el.classList.contains('hidden'); }),
     'Enter dismisses the gate and resumes the loop');
   var afterSub = await page.$eval('#practice-timer-sub', function (el) { return el.textContent; });
