@@ -102,6 +102,10 @@ function ok(cond, name) {
   await page.click('#practice-stage');
   var loopFirst = await page.$eval('#practice-text', function (el) { return el.textContent.slice(0, 3); });
   await page.type('#hidden-input', loopFirst, { delay: 30 });
+  // The first timer tick establishes the active part before the clock jumps ahead.
+  await page.waitForFunction(function () {
+    return /^Warm-up ·/.test(document.getElementById('practice-timer-sub').textContent);
+  }, { timeout: 5000 });
   await page.evaluate(function () {
     // Pull the session start 61s into the past so elapsed crosses the
     // first one-minute boundary on the next timer tick.
