@@ -30,3 +30,19 @@ jobs:
       # Both suites use only Node built-ins; Puppeteer is needed only for UI tests.
       - name: Run engine and badge tests
         run: npm --prefix tests test
+
+  ui:
+    name: Chrome UI
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Install locked UI test dependencies
+        run: npm --prefix tests ci
+      # Windows runners include Chrome at the UI suite's default executable path.
+      - name: Run Chrome UI tests
+        run: npm --prefix tests run test:ui

@@ -149,7 +149,7 @@ The engine and badge suites need only Node.js (22 or 24) and npm. From the repos
 npm --prefix tests test      # 171 engine + 79 badge assertions; no dependency install needed
 ```
 
-GitHub Actions runs the same command on Node.js 22 and 24 for every pull request and push to `main`.
+GitHub Actions runs the same command on Node.js 22 and 24 for every pull request and push to `main`. A separate Windows job runs all 153 UI assertions with Chrome and Node.js 24.
 
 The UI suite runs separately and needs Chrome plus the locked Puppeteer dependency. From the repository root:
 
